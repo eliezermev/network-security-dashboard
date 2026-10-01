@@ -105,7 +105,7 @@ hallazgos priorizados, acciones recomendadas y equipos pendientes.
 ## Estructura del proyecto
 
 ```
-api-nmap/
+network-security-dashboard/
 ├── app.js           # Frontend: llamadas a la API, parseo de nmap, UI
 ├── server.js        # Backend Express: endpoints + ejecución de nmap vía WSL
 ├── index.html       # Estructura de la interfaz
@@ -180,7 +180,7 @@ además envía payloads de denegación de servicio contra tus propios equipos.
 - **Lista blanca de flags** en `/api/scan/custom`; todo lo demás se rechaza.
 - **Archivos estáticos limitados**: solo se sirven `index.html`, `app.js` y
   `styles.css`. `server.js` y `package.json` devuelven 404.
-- **Escape de HTML** en todo dato provenance de nmap antes de inyectarlo.
+- **Escape de HTML** en todo dato proveniente de nmap antes de inyectarlo.
 
 Considera además no exponer el puerto 3000 a la red: el servidor queda en
 `0.0.0.0` y no tiene autenticación.
@@ -210,7 +210,7 @@ El dispositivo tarda demasiado en responder. Sube `NMAP_TIMEOUT` y usa
 `&os=false` para saltar la detección de SO.
 
 **La tarjeta aparece sin puertos**
-Puede ser que el host ya no esté en línea, o que el escaneo haya sido interrupted
+Puede ser que el host ya no esté en línea, o que el escaneo haya sido interrumpido
 por el timeout. Usa el botón **Reanalizar**.
 
 **No se detectan dispositivos**
@@ -255,11 +255,21 @@ git push -u origin main
 
 ### 4. Autenticación
 
-Si `git push` pide usuario: usa tu usuario de GitHub y como contraseña un
-**personal access token**, no tu contraseña real. Créalo en
-<https://github.com/settings/tokens> con el permiso `repo`, y guárdalo como
-credencial de Windows (Administrador → Credential Manager → Credenciales
-Windows). Te lo pedirá una sola vez.
+GitHub **no acepta tu contraseña normal** para hacer push por HTTPS. Se usa el
+gestor de credenciales que ya viene con Git para Windows, que abre el navegador
+para iniciar sesión:
+
+```powershell
+git credential-manager configure
+git push -u origin main
+```
+
+Se abrirá una ventana del navegador: inicia sesión y autoriza. Git guarda el
+acceso en el Administrador de credenciales de Windows y no lo volverá a pedir.
+
+Si prefieres hacerlo manualmente, crea un **personal access token** en
+<https://github.com/settings/tokens> con el permiso `repo` y úsalo como
+contraseña cuando git la solicite.
 
 ### Alternativa sin terminal
 
