@@ -25,7 +25,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "doctor": "node doctor.js"
+    "doctor": "node doctor.js",
+    "test": "node --test"
   },
   "dependencies": {
     "cors": "^2.8.5",

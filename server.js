@@ -66,7 +66,11 @@ function isValidTarget(str) {
         const [from, to] = value.split('-');
         return isValidIp(from) && isValidIp(to);
     }
-    return HOSTNAME_RE.test(value);
+    if (!HOSTNAME_RE.test(value)) return false;
+    // La última etiqueta de un hostname no puede ser solo numérica: "1.2.3.4.5"
+    // no es un nombre válido y nmap solo devolvería un error de resolución.
+    const labels = value.split('.');
+    return !/^\d+$/.test(labels[labels.length - 1]);
 }
 
 function isValidPorts(str) {

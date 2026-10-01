@@ -1,0 +1,83 @@
+name: CI
+
+# Se ejecuta en cada push y en cada pull request.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Pruebas en Ubuntu ${{ matrix.node }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22', '24']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # nmap ya viene instalado en los runners de Ubuntu, pero se instala
+      # explícitamente para no depender de la imagen base.
+      - name: Instalar nmap
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nmap iproute2
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Detecta archivos con sintaxis rota aunque ningún test los importe
+      - name: Comprobar sintaxis
+        run: |
+          for f in server.js doctor.js app.js lib/platform.js test/*.test.js; do
+            node --check "$f" || exit 1
+          done
+
+      # Comprueba que nmap, la red y los scripts NSE funcionan en este runner
+      - name: Diagnóstico del entorno
+        run: npm run doctor
+
+      # Pruebas unitarias de los parsers + pruebas de la API
+      - name: Pruebas
+        run: npm test
+
+  # La imagen se construye una sola vez, no por cada versión de Node.
+  docker:
+    name: Imagen de Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Construir la imagen
+        run: docker build -t api-nmap:ci .
+
+      - name: El contenedor arranca y responde
+        run: |
+          docker run -d --name api-nmap-ci -p 3000:3000 api-nmap:ci
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/health > /dev/null; then
+              echo "::notice::El contenedor responde correctamente"
+              curl -s http://localhost:3000/api/health
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::El contenedor no respondió a tiempo"
+          docker logs api-nmap-ci
+          exit 1

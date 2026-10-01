@@ -15,6 +15,7 @@ un informe de riesgo.
 - [Requisitos](#requisitos)
 - [Instalación](#instalación)
 - [Verificar la instalación](#verificar-la-instalación)
+- [Pruebas](#pruebas)
 - [Cómo usarlo](#cómo-usarlo)
 - [API](#api)
 - [Variables de entorno](#variables-de-entorno)
@@ -75,6 +76,18 @@ brew install iputils     # aporta 'ip', usado para detectar la red
 Los escaneos que requieren privilegios (`-O`, SYN scan) piden contraseña de
 administrador en macOS.
 
+### Estado de verificación
+
+| Plataforma | Estado |
+|------------|--------|
+| Windows + WSL + Kali | Probado de punta a punta |
+| Linux (nmap nativo) | Probado con y sin permisos root |
+| macOS | **Sin probar.** Es el camino menos verificado |
+
+En Linux se validó la detección de red con `ip`, el uso de nmap sin WSL y el
+comportamiento sin privilegios. En macOS el código es equivalente, pero depende
+de `ifconfig` para obtener la máscara de red.
+
 ---
 
 ## Instalación
@@ -119,6 +132,48 @@ npm run doctor
 
 No modifica nada: solo te dice qué funciona y qué falta, con el comando exacto
 para arreglarlo.
+
+---
+
+## Pruebas
+
+El proyecto trae pruebas que puedes ejecutar tú mismo:
+
+```bash
+npm test
+```
+
+```
+ℹ tests 27
+ℹ pass 27
+ℹ fail 0
+ℹ duration_ms 9043
+```
+
+Hay dos tipos:
+
+- **Unitarias** (`test/parsers.test.js`): verifican el parseo de la salida de
+  nmap. Incluyen los cuatro formatos que emite `--script vuln` y una salida real
+  de un router sin vulnerabilidades, para asegurar que no se reporten falsos
+  positivos.
+- **De integración** (`test/api.test.js`): levantan el servidor real y ejecutan
+  un escaneo de verdad contra `127.0.0.1`. También comprueban que se rechacen
+  los intentos de inyección de comandos y que no se sirvan archivos internos.
+
+Requieren nmap disponible. Tardan unos 10 segundos.
+
+Están verificadas en Windows (con WSL + Kali) y en Linux, tanto con permisos
+root como sin ellos.
+
+### Integración continua
+
+Cada push a `main` activa [GitHub Actions](.github/workflows/ci.yml), que
+ejecuta las pruebas en Ubuntu con Node 20, 22 y 24, construye la imagen de
+Docker y comprueba que el contenedor arranca y responde. Si algo se rompe, la
+pestaña *Actions* de tu repositorio lo muestra antes de publicar.
+
+**El indicador de estado aparece en la esquina superior derecha del README**
+una vez haya corrido la primera vez.
 
 ---
 
@@ -233,6 +288,12 @@ network-security-dashboard/
 ├── doctor.js        # Diagnóstico de la instalación (npm run doctor)
 ├── lib/
 │   └── platform.js  # Detección de SO/red y ejecución de nmap
+├── test/
+│   ├── parsers.test.js  # Pruebas del parseo de nmap
+│   └── api.test.js      # Pruebas del servidor con escaneo real
+├── .github/
+│   └── workflows/
+│       └── ci.yml       # Integración continua
 ├── index.html
 ├── styles.css
 ├── Dockerfile
@@ -320,6 +381,7 @@ git clone https://github.com/eliezermev/network-security-dashboard.git
 cd network-security-dashboard
 npm install
 npm run doctor     # comprueba que todo funciona
+npm test           # ejecuta las pruebas
 npm start
 ```
 
@@ -331,8 +393,9 @@ git commit -m "Describe el cambio"
 git push
 ```
 
-Si cambias algo del servidor, ejecuta `npm run doctor` y un escaneo completo
-antes de subirlo.
+Si cambias algo del servidor o de los parsers, ejecuta `npm test` antes de
+subirlo. GitHub Actions lo repetirá en Ubuntu con tres versiones de Node y en
+Docker.
 
 ---
 

@@ -295,7 +295,8 @@ function parseVulns(output) {
         if (pendingDetail) {
             if (cleaned && !/^[|_\s]*$/.test(line) && !META_RE.test(cleaned)) {
                 pendingDetail.text = `${pendingDetail.text} — ${cleaned}`;
-                pendingDetail.key = `${pendingDetail.cve || ''}|${pendingDetail.text}`;
+                // No se toca .key: es la base de deduplicación y debe
+                // permanecer estable aunque se anexe la descripción.
             }
             pendingDetail = null;
             continue;
@@ -930,4 +931,20 @@ function finishScan() {
 
 function closeReport() {
     el('reportPanel').classList.remove('active');
+}
+
+/* ---------------------------------------------------------------------------
+ * Export para las pruebas (test/parsers.test.js).
+ * En el navegador `module` no existe, así que esta línea no hace nada.
+ * ------------------------------------------------------------------------ */
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        parseDiscovery,
+        parseHostScan,
+        parseVulns,
+        scorePort,
+        computeRisk,
+        esc
+    };
 }
