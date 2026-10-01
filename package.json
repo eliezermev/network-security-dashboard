@@ -1,13 +1,34 @@
 {
   "name": "api-nmap",
   "version": "1.0.0",
-  "description": "Network Security Dashboard con nmap real",
+  "description": "Dashboard web que analiza la red local con nmap: descubre dispositivos, puertos, servicios y vulnerabilidades",
   "main": "server.js",
+  "license": "MIT",
+  "keywords": [
+    "nmap",
+    "network-scan",
+    "security",
+    "vulnerability-scanner",
+    "dashboard",
+    "pentesting"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eliezermev/network-security-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eliezermev/network-security-dashboard/issues"
+  },
+  "homepage": "https://github.com/eliezermev/network-security-dashboard#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "doctor": "node doctor.js"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
   }
 }
