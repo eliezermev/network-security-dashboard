@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Análisis de Red - TITANIO</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Network Security Dashboard</span>
+                </div>
+                <div class="scan-info">
+                    <span class="scan-date" id="scanDate">Sin escaneo previo</span>
+                    <span class="scan-status" id="scanStatus">En espera</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Botón Iniciar Análisis -->
+        <section class="scan-control">
+            <button class="btn btn-scan" id="btnStartScan" onclick="startScan()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Iniciar Análisis de Red
+            </button>
+        </section>
+
+        <!-- Progreso del Escaneo -->
+        <section class="scan-progress" id="scanProgress">
+            <div class="progress-header">
+                <h3>Ejecutando análisis...</h3>
+                <span class="progress-percent" id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="terminal-output" id="terminalOutput">
+                <!-- Salida del terminal se muestra aquí -->
+            </div>
+        </section>
+
+        <!-- Dispositivos Encontrados -->
+        <section class="devices-section" id="devicesSection">
+            <h2 class="section-title">Dispositivos Encontrados</h2>
+            <div class="devices-grid" id="devicesGrid">
+                <!-- Las tarjetas de dispositivos se generan dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Panel de Detalles -->
+        <section class="details-panel" id="detailsPanel">
+            <div class="details-header">
+                <h2 class="details-title" id="detailsTitle">Detalle del Dispositivo</h2>
+                <button class="btn-close" onclick="closeDetails()">×</button>
+            </div>
+            <div class="details-content" id="detailsContent">
+                <!-- Contenido dinámico -->
+            </div>
+        </section>
+
+        <!-- Botón Finalizar Análisis -->
+        <section class="scan-control" id="finishSection">
+            <button class="btn btn-finish" id="btnFinishScan" onclick="finishScan()" disabled>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Finalizar Análisis y Generar Informe
+            </button>
+        </section>
+
+        <!-- Informe Final -->
+        <section class="report-panel" id="reportPanel">
+            <div class="details-header">
+                <h2 class="details-title">Informe de Análisis de Seguridad</h2>
+                <button class="btn-close" onclick="closeReport()">×</button>
+            </div>
+            <div class="report-content" id="reportContent">
+                <!-- El informe se genera dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Network Security Dashboard — Análisis de red local</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
