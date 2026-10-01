@@ -1,5 +1,7 @@
 # API-NMAP · Network Security Dashboard
 
+[![CI](https://github.com/eliezermev/network-security-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/eliezermev/network-security-dashboard/actions/workflows/ci.yml)
+
 Dashboard web que analiza tu red local con **nmap real**: descubre dispositivos,
 identifica puertos y servicios abiertos, busca vulnerabilidades conocidas y genera
 un informe de riesgo.
@@ -169,11 +171,8 @@ root como sin ellos.
 
 Cada push a `main` activa [GitHub Actions](.github/workflows/ci.yml), que
 ejecuta las pruebas en Ubuntu con Node 20, 22 y 24, construye la imagen de
-Docker y comprueba que el contenedor arranca y responde. Si algo se rompe, la
-pestaña *Actions* de tu repositorio lo muestra antes de publicar.
-
-**El indicador de estado aparece en la esquina superior derecha del README**
-una vez haya corrido la primera vez.
+Docker y comprueba que el contenedor arranca y responde. La insignia arriba del
+README refleja el resultado del último push.
 
 ---
 
